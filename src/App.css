@@ -1,38 +1,115 @@
-.App {
+body {
+  background-color:#0056b3
+}
+
+h1 {
+color: #f9f9f9;
+}
+
+.error {
+  color: #f9f9f9;
+}
+
+.header {
+  display: flex;
+  justify-content: space-evenly; /* Espacio entre el logo-título y el input */
+  align-items: center; /* Alinear verticalmente */
+}
+
+.logo-title {
+  display: flex; /* Alinear logo y título en fila */
+  align-items: center; /* Alinear verticalmente el logo y el título */
+}
+
+.logo {
+  width: 80px; /* Ajusta el tamaño según sea necesario */
+  height: 100px; /* Asegúrate de que el ancho y alto sean iguales para un círculo */
+  border-radius: 30%; /* Esto hace que la imagen sea redonda */
+  padding: 10px 10px 0px;
+}
+
+.search-input {
+  padding: 8px; /* Espaciado dentro del input */
+}
+
+.dedicatories {
+  display: flex;
+  justify-content: center; /* Espacio entre las dedicatorias */
+  width: 100%; /* Ancho total */
+  padding: 10px; /* Espacio alrededor */
+  color:#f9f9f9;
+}
+
+.dedication {
+  width: 800px; /* Ancho fijo para cada dedicatoria */
+  text-align: center; /* Centrar el texto */
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 columnas */
+  gap: 10px; /* Espacio entre los ítems */
+  padding: 20px;
+}
+
+.grid-item {
+  border: 1px solid #ccc; /* Bordes alrededor de cada Pokémon */
+  border-radius: 8px; /* Esquinas redondeadas */
+  padding: 10px;
   text-align: center;
+  background-color: #f9f9f9; /* Color de fondo */
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.pokemon-image {
+  width: 180px;
+  height: 180px; /* Ajustar el tamaño de las imágenes */
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+button {
+  margin: 5px;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+button:hover {
+  background-color: #0056b3;
+}
+
+button.active {
+  background-color: #07b507; /* Cambia el color del botón activo */
+  font-weight: bold;
+}
+
+.no-pokemon-found {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.no-pokemon-found img {
+  width: 150px;
+  height: auto;
+  margin-bottom: 10px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
+@media (max-width: 768px) {
+  .grid-container {
+    grid-template-columns: repeat(2, 1fr); /* 2 columnas en pantallas pequeñas */
   }
 }
+
+@media (max-width: 480px) {
+  .grid-container {
+    grid-template-columns: 1fr; /* 1 columna en móviles */
+  }
+}
+
