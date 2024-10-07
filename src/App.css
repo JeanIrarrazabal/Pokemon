@@ -1,5 +1,10 @@
 body {
-  background-color:#0056b3
+  background-image: url('https://i.pinimg.com/originals/8a/78/6a/8a786a5c9da46a20e099b78f2c1fea94.jpg');
+  background-size: cover; /* Hace que la imagen cubra toda la pantalla */
+  background-position: center; /* Centra la imagen en el fondo */
+  background-repeat: no-repeat; /* Evita que la imagen se repita */
+  transition: filter 0.3s ease; /* Transición para el efecto de desenfoque */
+  margin: 10px;
 }
 
 h1 {
@@ -16,6 +21,10 @@ color: #f9f9f9;
   align-items: center; /* Alinear verticalmente */
 }
 
+.type-filters button {
+  display: none;
+}
+
 .logo-title {
   display: flex; /* Alinear logo y título en fila */
   align-items: center; /* Alinear verticalmente el logo y el título */
@@ -30,24 +39,24 @@ color: #f9f9f9;
 
 .search-input {
   padding: 8px; /* Espaciado dentro del input */
+  width: 80%;
 }
 
 .dedicatories {
   display: flex;
   justify-content: center; /* Espacio entre las dedicatorias */
-  width: 100%; /* Ancho total */
   padding: 10px; /* Espacio alrededor */
   color:#f9f9f9;
 }
 
 .dedication {
-  width: 800px; /* Ancho fijo para cada dedicatoria */
+  width: 90%; /* Ancho fijo para cada dedicatoria */
   text-align: center; /* Centrar el texto */
 }
 
 .grid-container {
   display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 3 columnas */
+  grid-template-columns: repeat(1, 1fr); /* 2 columnas en pantallas pequeñas */
   gap: 10px; /* Espacio entre los ítems */
   padding: 20px;
 }
@@ -65,6 +74,54 @@ color: #f9f9f9;
   height: 180px; /* Ajustar el tamaño de las imágenes */
 }
 
+.pokemon-image-large {
+  width: 80%; /* Tamaño más grande para el modal */
+  height: auto;
+}
+
+/* Estilos del modal */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  z-index: 1001;
+  width: 80%; /* Hacer el modal más pequeño en pantallas pequeñas */
+  max-width: 500px;
+  padding: 15px;
+}
+
+.close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+  font-size: 24px;
+}
+
+.modal-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+}
+
 button {
   margin: 5px;
   padding: 10px 15px;
@@ -76,7 +133,7 @@ button {
 }
 
 button:hover {
-  background-color: #0056b3;
+  background-color: #07b507;
 }
 
 button.active {
@@ -96,20 +153,27 @@ button.active {
 }
 
 .no-pokemon-found img {
-  width: 150px;
+  width: 200px;
   height: auto;
   margin-bottom: 10px;
 }
 
-@media (max-width: 768px) {
+@media (min-width: 1024px) {
   .grid-container {
-    grid-template-columns: repeat(2, 1fr); /* 2 columnas en pantallas pequeñas */
+    grid-template-columns: repeat(3, 1fr); /* 2 columnas en pantallas pequeñas */
+  }
+  .search-input {
+    width: 40%;
+  }
+  .type-filters button {
+    margin: 5px;
+    display: inline;
+  }
+  .type-filters {
+    flex-wrap: wrap; /* Hacer que los botones se alineen en varias filas */
+    justify-content: center; /* Centrar los botones en pantallas pequeñas */
+    margin: 10px;
   }
 }
 
-@media (max-width: 480px) {
-  .grid-container {
-    grid-template-columns: 1fr; /* 1 columna en móviles */
-  }
-}
 

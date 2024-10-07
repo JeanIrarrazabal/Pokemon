@@ -1,16 +1,20 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "./App.css"; // Asegúrate de importar el archivo CSS
+import "./App.css";
 
 const App = () => {
   const [pokemonList, setPokemonList] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [pokemonsPerPage] = useState(21);
+  const [selectedPokemon, setSelectedPokemon] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedType, setSelectedType] = useState("");
+  const [loading, setLoading] = useState(true); // Estado para la carga
 
-  // Obtener todos los Pokémon
   useEffect(() => {
     const fetchPokemon = async () => {
+      setLoading(true); // Activar el indicador de carga
       try {
         const response = await axios.get(
           "https://pokeapi.co/api/v2/pokemon?limit=649"
@@ -26,7 +30,6 @@ const App = () => {
                 (entry) => entry.language.name === "es"
               )?.flavor_text || "No description available.";
 
-            // Obtener la cadena evolutiva
             const evolutionChainUrl = speciesDetails.data.evolution_chain.url;
             const evolutionChainResponse = await axios.get(evolutionChainUrl);
             const evolutions = extractEvolutions(
@@ -44,24 +47,25 @@ const App = () => {
               types: pokemonDetails.data.types.map(
                 (typeInfo) => typeInfo.type.name
               ),
-              evolutions: evolutions, // Agregar evoluciones
+              evolutions: evolutions,
             };
           })
         );
         setPokemonList(detailedPokemonList);
       } catch (error) {
         console.error("Error fetching the Pokémon list", error);
+      } finally {
+        setLoading(false); // Desactivar el indicador de carga
       }
     };
 
-    // Función para extraer la cadena evolutiva
     const extractEvolutions = (chain) => {
       let evolutions = [];
       let currentStage = chain;
 
       do {
         evolutions.push(currentStage.species.name);
-        currentStage = currentStage.evolves_to[0]; // Moverse al siguiente paso en la cadena
+        currentStage = currentStage.evolves_to[0];
       } while (currentStage);
 
       return evolutions;
@@ -70,12 +74,16 @@ const App = () => {
     fetchPokemon();
   }, []);
 
-  // Filtrar los Pokémon en base a la búsqueda
-  const filteredPokemon = pokemonList.filter((pokemon) =>
-    pokemon.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredPokemon = pokemonList.filter((pokemon) => {
+    const matchesType = selectedType
+      ? pokemon.types.includes(selectedType)
+      : true;
+    return (
+      pokemon.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+      matchesType
+    );
+  });
 
-  // Calcular los Pokémon actuales según la página
   const indexOfLastPokemon = currentPage * pokemonsPerPage;
   const indexOfFirstPokemon = indexOfLastPokemon - pokemonsPerPage;
   const currentPokemons = filteredPokemon.slice(
@@ -83,91 +91,177 @@ const App = () => {
     indexOfLastPokemon
   );
 
-  // Cambiar de página
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-  // Total de páginas
   const totalPages = Math.ceil(filteredPokemon.length / pokemonsPerPage);
+
+  const openModal = (pokemon) => {
+    setSelectedPokemon(pokemon);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedPokemon(null);
+  };
+
+  const types = [
+    "grass",
+    "poison",
+    "fire",
+    "flying",
+    "water",
+    "bug",
+    "normal",
+    "electric",
+    "ground",
+    "fairy",
+    "fighting",
+    "psychic",
+    "rock",
+    "ghost",
+    "ice",
+    "dragon",
+    "dark",
+    "steel",
+    "fairy",
+  ];
+
+  const typeSpanish = {
+    grass: "planta",
+    poison: "veneno",
+    fire: "fuego",
+    flying: "volador",
+    water: "agua",
+    bug: "bicho",
+    normal: "normal",
+    electric: "eléctrico",
+    ground: "tierra",
+    fairy: "hada",
+    fighting: "lucha",
+    psychic: "psíquico",
+    rock: "roca",
+    ghost: "fantasma",
+    ice: "hielo",
+    dragon: "dragón",
+    dark: "siniestro",
+    steel: "acero",
+  };
 
   return (
     <div style={{ textAlign: "center" }}>
-   <div className="header">
-  <div className="logo-title">
-    <img
-      src={require('./benji.jpeg')}
-      alt="Logo Benji"
-      className="logo"
-    />
-    <h1>Pokédex de Benji</h1>
-  </div>
-  <input
-    type="text"
-    placeholder="Buscar Pokémon"
-    onChange={(e) => setSearchTerm(e.target.value)}
-    value={searchTerm}
-    className="search-input"
-  />
-</div>
-
-      
-
-      <div className="dedicatories">
-        <p className="dedication">
-          Cada Pokémon que descubres es una nueva lección y una oportunidad para
-          soñar. ¡Sigue explorando!. Siempre estaré a tu lado en cada batalla y en cada aventura.
-        </p>
-        
-      </div>
-      <div className="grid-container">
-        {currentPokemons.length ? (
-          currentPokemons.map((pokemon, index) => (
-            <div className="grid-item" key={index}>
-              <h3>
-                {pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1)}
-              </h3>
+      {loading ? ( // Si está cargando, mostrar indicador de carga
+        <div className="loading no-pokemon-found">
+          <h1>Benji espera mientras Pikachu busca a tus Pokémon...</h1>
+        </div>
+      ) : (
+        <>
+          <div className="header">
+            <div className="logo-title">
               <img
-                src={pokemon.image}
-                alt={pokemon.name}
-                className="pokemon-image"
+                src={require("./benji.jpeg")}
+                alt="Logo Benji"
+                className="logo"
               />
-              <p>
-                <strong>Type:</strong> {pokemon.types.join(", ")}
-              </p>
-              <p>{pokemon.description}</p>
-              <p>
-                <strong>Attacks:</strong> {pokemon.attacks.join(", ")}
-              </p>
-              <p>
-                <strong>Evolutions:</strong> {pokemon.evolutions.join(" → ")}
-              </p>{" "}
-              {/* Mostrar evoluciones */}
+              <h1>Pokédex de Benji</h1>
             </div>
-          ))
-        ) : (
-          <div className="no-pokemon-found">
-            <h3 class="error">Pokemones de Benji no encontrados</h3>
-            <img
-              src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/25.svg"
-              alt="Pikachu"
-            />
-            <p class="error">
-              Pikachu está triste porque por el momento no encontró ningún
-              Pokémon
+          </div>
+          <div className="dedicatories">
+            <p className="dedication">
+              Cada Pokémon que descubres es una nueva lección y una oportunidad
+              para soñar. ¡Sigue explorando! Siempre estaré a tu lado en cada
+              batalla y en cada aventura.
             </p>
           </div>
-        )}
-      </div>
-      <div>
-        {Array.from({ length: totalPages }, (_, index) => (
-          <button
-            key={index + 1}
-            onClick={() => paginate(index + 1)}
-            className={currentPage === index + 1 ? "active" : ""} // Aplicar clase 'active' si la página está seleccionada
-          >
-            {index + 1}
-          </button>
-        ))}
-      </div>
+          <input
+            type="text"
+            placeholder="Buscar Pokémon"
+            onChange={(e) => setSearchTerm(e.target.value)}
+            value={searchTerm}
+            className="search-input"
+          />
+          <div className="type-filters">
+            {types.map((type) => (
+              <button key={type} onClick={() => setSelectedType(type)}>
+                {typeSpanish[type].charAt(0).toUpperCase() +
+                  typeSpanish[type].slice(1)}{" "}
+                {/* Mostrar en español */}
+              </button>
+            ))}
+            <button onClick={() => setSelectedType("")}>Mostrar Todos</button>
+          </div>
+          <div className="grid-container">
+            {currentPokemons.length ? (
+              currentPokemons.map((pokemon, index) => (
+                <div className="grid-item" key={index}>
+                  <h3>
+                    {pokemon.name.charAt(0).toUpperCase() +
+                      pokemon.name.slice(1)}
+                  </h3>
+                  <img
+                    src={pokemon.image}
+                    alt={pokemon.name}
+                    className="pokemon-image"
+                  />
+                  <p>
+                    <strong>Tipo:</strong>{" "}
+                    {pokemon.types.map((type) => typeSpanish[type]).join(", ")}{" "}
+                    {/* Mostrar en español */}
+                  </p>
+
+                  <p>{pokemon.description}</p>
+                  <p>
+                    <strong>Evolutions:</strong>{" "}
+                    {pokemon.evolutions.join(" → ")}
+                  </p>
+                  <button onClick={() => openModal(pokemon)}>Ver más</button>
+                </div>
+              ))
+            ) : (
+              <div className="no-pokemon-found">
+                <h3 className="error">Pokemones de Benji no encontrados</h3>
+                <p className="error">
+                  Pikachu está triste porque por el momento no encontró ningún
+                  Pokémon
+                </p>
+              </div>
+            )}
+          </div>
+          <div>
+            {Array.from({ length: totalPages }, (_, index) => (
+              <button
+                key={index + 1}
+                onClick={() => paginate(index + 1)}
+                className={currentPage === index + 1 ? "active" : ""}
+              >
+                {index + 1}
+              </button>
+            ))}
+          </div>
+
+          {/* Modal */}
+          {isModalOpen && (
+            <div className="modal">
+              <div className="modal-content">
+                <h2>
+                  {selectedPokemon.name.charAt(0).toUpperCase() +
+                    selectedPokemon.name.slice(1)}
+                </h2>
+                <img
+                  src={selectedPokemon.image}
+                  alt={selectedPokemon.name}
+                  className="pokemon-image-large"
+                />
+                <p>{selectedPokemon.description}</p>
+                <p>
+                  <strong>Attacks:</strong> {selectedPokemon.attacks.join(", ")}
+                </p>
+                <button onClick={closeModal}>Cerrar</button>
+              </div>
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 };
