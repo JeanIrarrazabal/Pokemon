@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/Pokemon/static/css/main.7e54e324.css",
+    "main.js": "/Pokemon/static/js/main.b98d375e.js",
+    "static/js/453.c09a555b.chunk.js": "/Pokemon/static/js/453.c09a555b.chunk.js",
+    "static/media/benji.jpeg": "/Pokemon/static/media/benji.8dee9859fbe07843321a.jpeg",
+    "index.html": "/Pokemon/index.html",
+    "main.7e54e324.css.map": "/Pokemon/static/css/main.7e54e324.css.map",
+    "main.b98d375e.js.map": "/Pokemon/static/js/main.b98d375e.js.map",
+    "453.c09a555b.chunk.js.map": "/Pokemon/static/js/453.c09a555b.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.7e54e324.css",
+    "static/js/main.b98d375e.js"
+  ]
+}
